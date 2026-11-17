@@ -1,0 +1,29 @@
+name: Build NASMusicTV APK
+on:
+  workflow_dispatch: # ✅ 支持手动点按钮触发编译（最重要）
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取源码
+        uses: actions/checkout@v4
+
+      - name: 配置JDK17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: 给gradlew执行权限
+        run: chmod +x ./gradlew
+
+      - name: 编译Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: 上传APK成品
+        uses: actions/upload-artifact@v4
+        with:
+          name: NASMusicTV-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
